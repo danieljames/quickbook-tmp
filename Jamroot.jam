@@ -40,3 +40,4 @@ if ! $(boost-root)
 }
 
 path-constant BOOST_ROOT : $(boost-root) ;
+modules.poke : QUICKBOOK_ROOT : $(top) ;

@@ -17,7 +17,10 @@ project quickbook
         <toolset>msvc:<cflags>/wd4709
         <toolset>gcc:<define>BOOST_DETAIL_CONTAINER_FWD
         <toolset>darwin:<define>BOOST_DETAIL_CONTAINER_FWD
+        <link>static
     ;
+
+use-project /boost : $(BOOST_ROOT) ;
 
 lib shell32 ;
 
