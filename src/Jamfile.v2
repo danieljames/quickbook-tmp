@@ -17,10 +17,7 @@ project quickbook
         <toolset>msvc:<cflags>/wd4709
         <toolset>gcc:<define>BOOST_DETAIL_CONTAINER_FWD
         <toolset>darwin:<define>BOOST_DETAIL_CONTAINER_FWD
-        <link>static
     ;
-
-use-project /boost : $(BOOST_ROOT) ;
 
 lib shell32 ;
 
@@ -47,8 +44,8 @@ exe quickbook
     block_element_grammar.cpp
     phrase_element_grammar.cpp
     doc_info_grammar.cpp
-    /boost//program_options
-    /boost//filesystem
+    /boost//program_options/<link>static
+    /boost//filesystem/<link>static
     : #<define>QUICKBOOK_NO_DATES
       <define>BOOST_FILESYSTEM_NO_DEPRECATED
       <toolset>msvc:<cxxflags>/wd4355

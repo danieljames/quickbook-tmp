@@ -12,7 +12,7 @@ project quickbook-unit-tests
     : requirements
         <include>../../src
         <warnings>all
-        <library>/boost//filesystem
+        <library>/boost//filesystem/<link>static
         <toolset>gcc:<cflags>-g0
         <toolset>darwin:<cflags>-g0
         <toolset>msvc:<cflags>/wd4709
