@@ -267,9 +267,9 @@ namespace quickbook
             new main_grammar_local(state));
 
         // Global Actions
-        element_action element(state);
-        paragraph_action paragraph(state);
-        list_item_action list_item(state);
+        quickbook::element_action element_action(state);
+        quickbook::paragraph_action paragraph_action(state);
+        quickbook::list_item_action list_item_action(state);
 
         phrase_end_action end_phrase(state);
         raw_char_action raw_char(state.phrase);
@@ -408,7 +408,7 @@ namespace quickbook
                     >>  local.syntactic_block_item
                     )
                 ]
-            ]                                   [paragraph]
+            ]                                   [paragraph_action]
             ;
 
         local.list =
@@ -426,9 +426,9 @@ namespace quickbook
                         >>  local.syntactic_block_item
                         )
                     ]
-                ]                                   [list_item]
-                // TODO: `list_item` is sometimes called in the wrong place.
-                // Currently harmless.
+                ]                                   [list_item_action]
+                // TODO: `list_item_action` is sometimes called in the wrong
+                // place. Currently harmless.
             ;
 
         local.syntactic_block_item =
@@ -455,12 +455,13 @@ namespace quickbook
             state.values.save()
             [
                 scoped_context(element_info::in_nested_block)
-                [   *(  local.paragraph_separator   [paragraph]
+                [   *(  local.paragraph_separator
+                                                [paragraph_action]
                     |   ~cl::eps_p(']')
                     >>  local.common
                     )
                 ]
-            ]                                       [paragraph]
+            ]                                   [paragraph_action]
             ;
 
         local.hr =
@@ -472,7 +473,7 @@ namespace quickbook
                     >>  *(line_comment | (cl::anychar_p - (cl::eol_p | "[/")))
                     )
                 >>  *eol
-                ]                               [element]
+                ]                               [element_action]
             ;
 
         local.element
@@ -487,7 +488,7 @@ namespace quickbook
                     [   cl::lazy_p(*ph::var(local.info.rule))
                     >>  space
                     >>  ']'
-                    ]                           [element]
+                    ]                           [element_action]
                 ]
             ;
 
@@ -496,7 +497,7 @@ namespace quickbook
             [(  local.code_line
                 >> *(*local.blank_line >> local.code_line)
             )                                   [state.values.entry(ph::arg1, ph::arg2)]
-            ]                                   [element]
+            ]                                   [element_action]
             >> *eol
             ;
 
@@ -575,7 +576,7 @@ namespace quickbook
                 >>  !local.template_args
                 >>  ']'
                 ]
-            )                                   [element]
+            )                                   [element_action]
             ;
 
         local.template_args =
@@ -655,7 +656,7 @@ namespace quickbook
                 ) >> cl::eps_p('`')
             )                                   [state.values.entry(ph::arg1, ph::arg2)]
             >>  '`'
-            ]                                   [element]
+            ]                                   [element_action]
             ;
 
         local.skip_inline_code =
@@ -713,7 +714,7 @@ namespace quickbook
                             >>  !(*cl::blank_p >> cl::eol_p)
                         )                   [state.values.entry(ph::arg1, ph::arg2)]
                     >>  (*cl::space_p >> "```")
-                    ]                       [element]
+                    ]                       [element_action]
                 |   cl::eps_p               [error("Unfinished code block")]
                 >>  *cl::anychar_p
                 )
@@ -729,7 +730,7 @@ namespace quickbook
                             >>  !(*cl::blank_p >> cl::eol_p)
                         )                   [state.values.entry(ph::arg1, ph::arg2)]
                     >>  (*cl::space_p >> "``")
-                    ]                       [element]
+                    ]                       [element_action]
                 |   cl::eps_p               [error("Unfinished code block")]
                 >>  *cl::anychar_p
                 )
@@ -797,7 +798,7 @@ namespace quickbook
                 [   (*(cl::anychar_p - "'''"))  [state.values.entry(ph::arg1, ph::arg2, phrase_tags::escape)]
                 >>  (   cl::str_p("'''")
                     |   cl::eps_p               [error("Unclosed boostbook escape.")]
-                    )                           [element]
+                    )                           [element_action]
                 ]
             ;
 
@@ -828,7 +829,7 @@ namespace quickbook
             >>  (*(cl::anychar_p - "'''"))
             >>  (   cl::str_p("'''")
                 |   cl::eps_p                   [error("Unclosed boostbook escape.")]
-                )                               [element]
+                )                               [element_action]
             ;
 
         attribute_value_1_7 =
@@ -868,7 +869,7 @@ namespace quickbook
                 >>  *cl::space_p
                 )
             >>  cl::end_p
-            ]                                   [element]
+            ]                                   [element_action]
             ;
 
         local.command_line_macro_identifier =
