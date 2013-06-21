@@ -455,13 +455,16 @@ namespace quickbook
             >>  local.common
                 // If the element is a block, then a newline will end the
                 // current syntactic block.
-            >>  !(  cl::eps_p
+                // Note that we don't do it for lists in 1.6 to avoid messing
+                // up on nested block elements.
+            >>  !(  cl::eps_p(in_list) >> qbk_ver(106u)
+                |   cl::eps_p
                     (
                         ph::static_cast_<int>(local.syntactic_block_item.is_block) &
                         ph::static_cast_<int>(ph::var(local.element_type))
                     )
-                >>  eol
-                )                               [ph::var(local.still_in_block) = false]
+                >>  eol                         [ph::var(local.still_in_block) = false]
+                )
             ;
 
         local.paragraph_separator =
