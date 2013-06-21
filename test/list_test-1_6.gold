@@ -341,6 +341,22 @@
         [section Doesn't expand] Blah, blah. [endsect]
       </simpara>
     </listitem>
+    <listitem>
+      <simpara>
+        <para>
+          Paragraph cheat 1.
+        </para>
+        Paragraph cheat 2.
+      </simpara>
+    </listitem>
+    <listitem>
+      <simpara>
+        <para>
+          Paragraph cheat 3.
+        </para>
+        Paragraph cheat 4.
+      </simpara>
+    </listitem>
   </itemizedlist>
   <para>
     Don't end list with comment 1:
