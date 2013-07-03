@@ -117,7 +117,7 @@ namespace quickbook
                 quickbook::detail::path_to_generic(file_out));
         }
 
-        out.exceptions(std::ios::failbit | std::ios::badbit);
+        out.exceptions(std::ios::badbit);
         write_dependencies(out, f);
     }
 
