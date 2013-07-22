@@ -455,7 +455,7 @@ namespace quickbook
             >>  local.common
                 // If the element is a block, then a newline will end the
                 // current syntactic block.
-                // Note that we don't do it for lists in 1.6 to avoid messing
+                // Note that we don't do this for lists in 1.6 to avoid messing
                 // up on nested block elements.
             >>  !(  cl::eps_p(in_list) >> qbk_ver(106u)
                 |   cl::eps_p
