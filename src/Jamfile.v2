@@ -8,7 +8,7 @@
 #   http://www.boost.org/LICENSE_1_0.txt)
 #==============================================================================
 
-project quickbook
+project git/quickbook
     : requirements
         <toolset>gcc:<c++-template-depth>300
         <toolset>darwin:<c++-template-depth>300
@@ -46,8 +46,8 @@ exe quickbook
     block_element_grammar.cpp
     phrase_element_grammar.cpp
     doc_info_grammar.cpp
-    /boost//program_options
-    /boost//filesystem
+    /boost//program_options/<link>static
+    /boost//filesystem/<link>static
     : #<define>QUICKBOOK_NO_DATES
       <define>BOOST_FILESYSTEM_NO_DEPRECATED
       <toolset>msvc:<cxxflags>/wd4355

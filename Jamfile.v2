@@ -15,7 +15,7 @@ install dist-bin
     src//quickbook
     :
     <install-type>EXE
-    <location>../../dist/bin
+    <location>dist/bin
     :
     release
     ;
