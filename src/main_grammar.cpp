@@ -432,7 +432,8 @@ namespace quickbook
         block_start =
                 (*eol)                  [start_blocks]
             >>  (   *(  local.top_level
-                    >>  !(  cl::ch_p(']')
+                    >>  !(  qbk_ver(106u)
+                        >>  cl::ch_p(']')
                         >>  cl::eps_p   [error("Mismatched close bracket")]
                         )
                     )
@@ -606,7 +607,8 @@ namespace quickbook
 
         skip_entity =
                 '['
-            >>  !cl::ch_p('`')
+                // For escaped templates:
+            >>  !(space >> cl::ch_p('`') >> (cl::alpha_p | '_'))
             >>  *(~cl::eps_p(']') >> skip_entity)
             >>  !cl::ch_p(']')
             |   local.skip_code_block
@@ -642,10 +644,24 @@ namespace quickbook
             (   '['
             >>  space
             >>  state.values.list(template_tags::template_)
-                [   !cl::str_p("`")             [state.values.entry(ph::arg1, ph::arg2, template_tags::escape)]
-                >>  (   cl::eps_p(cl::punct_p)
-                    >>  state.templates.scope   [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
-                    |   state.templates.scope   [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
+                [   (   cl::str_p('`')
+                    >>  cl::eps_p(cl::punct_p)
+                    >>  state.templates.scope
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::escape)]
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
+                    >>  !qbk_ver(106u)
+                            [error("Templates with punctuation names can't be escaped in quickbook 1.6+")]
+                    |   cl::str_p('`')
+                    >>  state.templates.scope
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::escape)]
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
+
+                    |   cl::eps_p(cl::punct_p)
+                    >>  state.templates.scope
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
+
+                    |   state.templates.scope
+                            [state.values.entry(ph::arg1, ph::arg2, template_tags::identifier)]
                     >>  cl::eps_p(hard_space)
                     )
                 >>  space

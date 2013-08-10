@@ -285,8 +285,29 @@ A <emphasis>paragraph</emphasis>.
 [section:template_body Skipping the template body correctly]
 
 [template args1[x] [`x]]
+[template args2[]
+[ordered_list [``code``]]
+]
+[/ Due to a bug in the template parser need to stop the parser
+   thinking that the code is an escaped template. ]
+[template args3[]
+[ordered_list [\ `code`]]
+]
 
 [args1 <emphasis>Argument</emphasis>]
+[args2]
+[args3]
 
+[endsect]
+
+[/----------------------------------- Escaped templates ]
+
+[section Escaped templates]
+
+[template raw_markup <thingbob>Not real boostbook</thingbob>]
+[template escaped1 [x] [`x]]
+
+[`raw_markup]
+[escaped1 <thingbob>More fake boostbook</thingbob>]
 
 [endsect]
