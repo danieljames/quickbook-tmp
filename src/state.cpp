@@ -40,7 +40,7 @@ namespace quickbook
         , callouts()
         , callout_depth(0)
         , dependencies()
-        , in_list(false)
+        , explicit_list(false)
 
         , imported(false)
         , macro()
@@ -52,8 +52,11 @@ namespace quickbook
         , template_depth(0)
         , min_section_level(1)
 
+        , in_list(false)
+        , in_list_save()
         , out(out_)
         , phrase()
+
         , values(&current_file)
     {
         // add the predefined macros
@@ -70,6 +73,19 @@ namespace quickbook
 
     quickbook_grammar& state::grammar() const {
         return *grammar_;
+    }
+    
+    void state::push_output() {
+        out.push();
+        phrase.push();
+        in_list_save.push(in_list);
+    }
+
+    void state::pop_output() {
+        phrase.pop();
+        out.pop();
+        in_list = in_list_save.top();
+        in_list_save.pop();
     }
 
     state_save::state_save(quickbook::state& state, scope_flags scope)
@@ -88,8 +104,7 @@ namespace quickbook
         if (scope & scope_macros) macro = state.macro;
         if (scope & scope_templates) state.templates.push();
         if (scope & scope_output) {
-            state.out.push();
-            state.phrase.push();
+            state.push_output();
         }
         state.values.builder.save();
     }
@@ -104,8 +119,7 @@ namespace quickbook
         boost::swap(state.xinclude_base, xinclude_base);
         boost::swap(state.source_mode, source_mode);
         if (scope & scope_output) {
-            state.out.pop();
-            state.phrase.pop();
+            state.pop_output();
         }
         if (scope & scope_templates) state.templates.pop();
         if (scope & scope_macros) state.macro = macro;

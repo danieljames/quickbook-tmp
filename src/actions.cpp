@@ -331,6 +331,11 @@ namespace quickbook
         }
     }
 
+    void explicit_list_action::operator()() const
+    {
+        state.explicit_list = true;
+    }
+
     void phrase_end_action::operator()() const
     {
         write_anchors(state, state.phrase);
@@ -482,8 +487,7 @@ namespace quickbook
             state.conditional = find(state.macro, macro.c_str());
 
             if (!state.conditional) {
-                state.phrase.push();
-                state.out.push();
+                state.push_output();
                 state.anchors.swap(anchors);
             }
         }
@@ -495,8 +499,7 @@ namespace quickbook
     {
         if (saved_conditional && !state.conditional)
         {
-            state.phrase.pop();
-            state.out.pop();
+            state.pop_output();
             state.anchors.swap(anchors);
         }
 
@@ -526,9 +529,9 @@ namespace quickbook
     {
         write_anchors(*this, (in_list ? phrase : out));
         assert(mark == '*' || mark == '#');
-        phrase.push();
-        out.push();
+        push_output();
         out << ((mark == '#') ? "<orderedlist>\n" : "<itemizedlist>\n");
+        in_list = true;
     }
 
     void state::end_list(char mark)
@@ -540,8 +543,7 @@ namespace quickbook
         std::string list_output;
         out.swap(list_output);
 
-        out.pop();
-        phrase.pop();
+        pop_output();
 
         (in_list ? phrase : out) << list_output;
     }
@@ -2087,8 +2089,7 @@ namespace quickbook
 
     bool to_value_scoped_action::start(value::tag_type t)
     {
-        state.out.push();
-        state.phrase.push();
+        state.push_output();
         state.anchors.swap(saved_anchors);
         tag = t;
 
@@ -2119,8 +2120,7 @@ namespace quickbook
     
     void to_value_scoped_action::cleanup()
     {
-        state.phrase.pop();
-        state.out.pop();
+        state.pop_output();
         state.anchors.swap(saved_anchors);
     }
 }
