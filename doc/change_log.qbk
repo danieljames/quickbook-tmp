@@ -317,3 +317,5 @@ Boost 1.46.1:
     in a phrase template.
 * Internal changes:
   * Clean up the id manager implementation.
+
+[heading Version 1.7.0]
