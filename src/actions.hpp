@@ -247,7 +247,7 @@ namespace quickbook
 
     // member_action
     //
-    // Action for calling a nullary member function.
+    // Action for calling a member function taking two parse iterators.
 
     template <typename T>
     struct member_action
@@ -266,8 +266,7 @@ namespace quickbook
 
     // member_action1
     //
-    // Action for calling a unary member function with given
-    // argument.
+    // Action for calling a member function taking two parse iterators and a value.
 
     template <typename T, typename Arg1>
     struct member_action1
@@ -300,7 +299,7 @@ namespace quickbook
 
     // member_action_value
     //
-    // Action for calling a nullary member function object.
+    // Action for calling a unary member function.
 
     template <typename T, typename Value>
     struct member_action_value
@@ -313,6 +312,30 @@ namespace quickbook
         member_action_value(T& l, member_function mf) : l(l), mf(mf) {}
 
         void operator()(Value v) const {
+            (l.*mf)(v);
+        }
+    };
+
+    // member_action_value
+    //
+    // Action for calling a unary member function with a fixed value.
+
+    template <typename T, typename Value>
+    struct member_action_fixed_value
+    {
+        typedef void(T::*member_function)(Value);
+
+        T& l;
+        member_function mf;
+        Value v;
+
+        member_action_fixed_value(T& l, member_function mf, Value v) : l(l), mf(mf), v(v) {}
+
+        void operator()() const {
+            (l.*mf)(v);
+        }
+
+        void operator()(parse_iterator first, parse_iterator last) const {
             (l.*mf)(v);
         }
     };
