@@ -257,9 +257,8 @@ namespace quickbook
         glob_iterator filename_it = filename.begin();
         glob_iterator filename_end = filename.end();
 
-        // TODO: Warn the user?
         if (!check_utf8_encoding(filename_it, filename_end))
-            return false;
+            throw encoding_error("Filename not UTF-8 encoded.");
 
         glob_iterator pattern_it = pattern.begin();
         glob_iterator pattern_end = pattern.end();
@@ -273,8 +272,7 @@ namespace quickbook
 
             if (pattern_it == pattern_end) return true;
 
-            // TODO: Error?
-            if (*pattern_it == '*') return false;
+            if (*pattern_it == '*') throw glob_error("Invalid glob");
 
             while (true) {
                 if (filename_it == filename_end) return false;
@@ -315,7 +313,8 @@ namespace quickbook
                     break;
                 case '\\':
                     ++pattern_it;
-                    if (pattern_it == pattern_end) return false;
+                    if (pattern_it == pattern_end)
+                        throw glob_error("Invalid glob");
                     BOOST_FALLTHROUGH;
                 default:
                     if (*pattern_it != *filename_it) return false;
@@ -340,7 +339,7 @@ namespace quickbook
     {
         assert(pattern_begin != pattern_end && *pattern_begin == '[');
         ++pattern_begin;
-        if (pattern_begin == pattern_end) return false;
+        if (pattern_begin == pattern_end) throw glob_error("Invalid glob");
 
         bool invert_match = false;
         bool matched = false;
@@ -353,7 +352,7 @@ namespace quickbook
         if (*pattern_begin == '^') {
             invert_match = true;
             ++pattern_begin;
-            if (pattern_begin == pattern_end) return false;
+            if (pattern_begin == pattern_end) throw glob_error("Invalid glob");
         }
 
         unsigned x = *filename_begin;
@@ -363,12 +362,13 @@ namespace quickbook
             unsigned char first = *pattern_begin;
             ++pattern_begin;
             if (first == ']') break;
-            if (pattern_begin == pattern_end) return false;
+            if (pattern_begin == pattern_end) throw glob_error("Invalid glob");
 
             if (first == '\\') {
                 first = *pattern_begin;
                 ++pattern_begin;
-                if (pattern_begin == pattern_end) return false;
+                if (pattern_begin == pattern_end)
+                    throw glob_error("Invalid glob");
             }
 
             if (*pattern_begin != '-') {
@@ -376,7 +376,8 @@ namespace quickbook
             }
             else {
                 ++pattern_begin;
-                if (pattern_begin == pattern_end) return false;
+                if (pattern_begin == pattern_end)
+                    throw glob_error("Invalid glob");
 
                 unsigned char second = *pattern_begin;
                 ++pattern_begin;
@@ -384,12 +385,14 @@ namespace quickbook
                     matched = matched || (first == x) || (x == '-');
                     break;
                 }
-                if (pattern_begin == pattern_end) return false;
+                if (pattern_begin == pattern_end)
+                    throw glob_error("Invalid glob");
 
                 if (second == '\\') {
                     second = *pattern_begin;
                     ++pattern_begin;
-                    if (pattern_begin == pattern_end) return false;
+                    if (pattern_begin == pattern_end)
+                        throw glob_error("Invalid glob");
                 }
 
                 // TODO: What if second < first?
