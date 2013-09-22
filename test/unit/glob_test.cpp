@@ -9,6 +9,20 @@
 #include "glob.hpp"
 #include <boost/detail/lightweight_test.hpp>
 
+void cafe_test(boost::string_ref filename)
+{
+    // Write out the string just to make sure I encoded it correctly.
+    std::cout << "Cafe test for: " << filename << std::endl;
+    BOOST_TEST(quickbook::glob("caf?.txt", filename));
+    BOOST_TEST(quickbook::glob("caf[^a-z].txt", filename));
+    BOOST_TEST(quickbook::glob("ca[a-z]?.txt", filename));
+    BOOST_TEST(quickbook::glob("c*", filename));
+    BOOST_TEST(quickbook::glob("c*.txt", filename));
+    BOOST_TEST(quickbook::glob("caf*.txt", filename));
+    BOOST_TEST(!quickbook::glob("cafe?.txt", filename));
+    BOOST_TEST(!quickbook::glob("caf[a-z].txt", filename));
+}
+
 void glob_tests() {
     BOOST_TEST(quickbook::glob("", ""));
 
@@ -116,6 +130,8 @@ void check_glob_tests()
 int main()
 {
     glob_tests();
+    cafe_test("caf\x0C3\x0A9.txt");
+    cafe_test("cafe\x0CC\x081.txt");
     check_glob_tests();
 
     return boost::report_errors();
