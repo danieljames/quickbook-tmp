@@ -88,7 +88,8 @@ namespace quickbook
 
     void include_search_glob(std::set<quickbook_path> & result,
         quickbook_path const& location,
-        std::string path, quickbook::state& state)
+        std::string path, quickbook::state& state,
+        string_iterator pos)
     {
         std::size_t glob_pos = find_glob_char(path);
 
@@ -134,7 +135,17 @@ namespace quickbook
             std::string generic_path = detail::path_to_generic(f);
 
             // Skip if the dir item doesn't match.
-            if (!quickbook::glob(glob, generic_path)) continue;
+            try {
+                if (!quickbook::glob(glob, generic_path)) continue;
+            }
+            catch (encoding_error e) {
+                detail::outwarn(state.current_file, pos)
+                    << "While searching for glob, found a path that doesn't "
+                    << "appear to be UTF-8: "
+                    << f
+                    << std::endl;
+                continue;
+            }
 
             // If it's a file we add it to the results.
             if (next == std::string::npos)
@@ -152,7 +163,7 @@ namespace quickbook
                 if (!fs::is_regular_file(dir_i->status()))
                 {
                     include_search_glob(result, new_location / generic_path,
-                            path.substr(next), state);
+                            path.substr(next), state, pos);
                 }
             }
         }
@@ -175,14 +186,14 @@ namespace quickbook
                 include_search_glob(result,
                         quickbook_path(current,
                             state.abstract_file_path.parent_path()),
-                        parameter.value, state);
+                        parameter.value, state, pos);
 
                 // Search the include path dirs accumulating to the result.
                 BOOST_FOREACH(fs::path dir, include_path)
                 {
                     state.dependencies.add_glob(dir / parameter.value);
                     include_search_glob(result, quickbook_path(dir, fs::path()),
-                            parameter.value, state);
+                            parameter.value, state, pos);
                 }
 
                 // Done.
