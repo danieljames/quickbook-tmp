@@ -26,7 +26,7 @@
 #endif
 
 namespace quickbook {
-    extern bool ms_errors;
+    bool ms_errors;
 }
 
 namespace quickbook {

@@ -51,7 +51,6 @@ namespace quickbook
     tm* current_gm_time; // the current UTC time
     bool debug_mode; // for quickbook developers only
     bool self_linked_headers;
-    bool ms_errors = false; // output errors/warnings as if for VS
     std::vector<fs::path> include_path;
     std::vector<std::string> preset_defines;
     fs::path image_location;

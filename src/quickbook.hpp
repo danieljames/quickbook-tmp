@@ -30,6 +30,7 @@ namespace quickbook
     extern std::vector<fs::path> include_path;
     extern std::vector<std::string> preset_defines;
     extern fs::path image_location;
+    extern bool ms_errors;
 
     void parse_file(quickbook::state& state,
             value include_doc_id = value(),

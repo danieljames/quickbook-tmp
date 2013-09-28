@@ -8,6 +8,8 @@
     http://www.boost.org/LICENSE_1_0.txt)
 =============================================================================*/
 #include "files.hpp"
+#include "rubbish_utf8.hpp"
+#include "native_text.hpp"
 #include <boost/filesystem/fstream.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/range/algorithm/upper_bound.hpp>
@@ -123,6 +125,14 @@ namespace quickbook
 
             if (in.bad())
                 throw load_error("Error reading input file.");
+
+            if (!check_utf8_encoding(source)) {
+                detail::outwarn(filename)
+                    << "File doesn't appear to be encoded in UTF-8 "
+                       "which can cause problems."
+                    << std::endl;
+            }
+
 
             bool inserted;
 

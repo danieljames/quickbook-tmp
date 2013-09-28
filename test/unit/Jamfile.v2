@@ -21,8 +21,8 @@ project git/quickbook/test/unit-tests
     ;
 
 alias qbk-rubbish-utf8 : ../../src/rubbish_utf8.cpp ;
-alias qbk-native-text : ../../src/native_text.cpp ;
-alias qbk-files : ../../src/files.cpp ;
+alias qbk-native-text : ../../src/native_text.cpp qbk-rubbish-utf8 ;
+alias qbk-files : ../../src/files.cpp qbk-native-text ;
 alias qbk-values : ../../src/values.cpp qbk-files ;
 alias qbk-post-process : ../../src/post_process.cpp ;
 alias qbk-glob : ../../src/glob.cpp qbk-rubbish-utf8 ;
