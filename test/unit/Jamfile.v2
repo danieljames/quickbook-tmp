@@ -20,10 +20,12 @@ project git/quickbook/test/unit-tests
         <toolset>darwin:<define>BOOST_DETAIL_CONTAINER_FWD
     ;
 
+alias qbk-rubbish-utf8 : ../../src/rubbish_utf8.cpp ;
+alias qbk-native-text : ../../src/native_text.cpp ;
 alias qbk-files : ../../src/files.cpp ;
 alias qbk-values : ../../src/values.cpp qbk-files ;
 alias qbk-post-process : ../../src/post_process.cpp ;
-alias qbk-glob : ../../src/glob.cpp ;
+alias qbk-glob : ../../src/glob.cpp qbk-rubbish-utf8 ;
 
 run values_test.cpp qbk-values ;
 run post_process_test.cpp qbk-post-process ;
