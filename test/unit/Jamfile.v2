@@ -20,10 +20,15 @@ project git/quickbook/test/unit-tests
         <toolset>darwin:<define>BOOST_DETAIL_CONTAINER_FWD
     ;
 
-run values_test.cpp ../../src/values.cpp ../../src/files.cpp ;
-run post_process_test.cpp ../../src/post_process.cpp ;
-run source_map_test.cpp ../../src/files.cpp ;
-run glob_test.cpp ../../src/glob.cpp ;
+alias qbk-files : ../../src/files.cpp ;
+alias qbk-values : ../../src/values.cpp qbk-files ;
+alias qbk-post-process : ../../src/post_process.cpp ;
+alias qbk-glob : ../../src/glob.cpp ;
+
+run values_test.cpp qbk-values ;
+run post_process_test.cpp qbk-post-process ;
+run source_map_test.cpp qbk-files ;
+run glob_test.cpp qbk-glob ;
 
 # Copied from spirit
 run symbols_tests.cpp ;
